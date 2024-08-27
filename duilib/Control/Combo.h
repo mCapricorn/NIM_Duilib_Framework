@@ -1,4 +1,4 @@
-#ifndef UI_CONTROL_COMBO_H_
+﻿#ifndef UI_CONTROL_COMBO_H_
 #define UI_CONTROL_COMBO_H_
 
 #pragma once
@@ -133,6 +133,20 @@ public:
 	 */
 	void AttachWindowClose(const EventCallback& callback) { OnEvent[kEventWindowClose] += callback; };
 
+	/**
+	 * @brief 设置提示文字
+	 * @param[in] strText 要设置的提示文字
+	 * @return 无
+	 */
+	void SetPromptText(const std::wstring& strText);
+
+	/**
+	 * @brief 绘制提示文字
+	 * @param[in] pRender 绘制引擎
+	 * @return 无
+	 */
+	void PaintPromptText(IRenderContext* pRender);
+
 private:
 	/**
 	 * @brief 默认的子项被选择处理函数
@@ -157,6 +171,8 @@ protected:
 	std::wstring m_sDropBoxAttributes;
 	bool m_bPopupTop;
 	UiRect	m_rcTextPadding;	//add by djj
+	std::wstring m_sPromptText;
+	std::wstring m_sPromptColor;
 };
 
 } // namespace ui

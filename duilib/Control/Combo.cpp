@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+﻿#include "StdAfx.h"
 
 namespace ui
 {
@@ -268,7 +268,37 @@ void Combo::SetAttribute(const std::wstring& strName, const std::wstring& strVal
 		rcTextPadding.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);
 		SetTextPadding(rcTextPadding);
 	}
+	else if (strName == _T("prompttext")) SetPromptText(strValue);
+	else if (strName == _T("promptcolor")) {
+		LPCTSTR pValue = strValue.c_str();
+		while (*pValue > _T('\0') && *pValue <= _T(' ')) pValue = ::CharNext(pValue);
+		m_sPromptColor = pValue;
+	}
 	else Box::SetAttribute(strName, strValue);
+}
+
+
+void Combo::SetPromptText(const std::wstring& strText)
+{
+	if (m_sPromptText == strText) return;
+	m_sPromptText = strText;
+
+	Invalidate();
+}
+
+void Combo::PaintPromptText(IRenderContext* pRender)
+{
+	if (m_iCurSel >= 0)
+		return;
+
+	std::wstring strPrompt = m_sPromptText;
+	if (strPrompt.empty() || m_sPromptColor.empty())
+		return;
+
+	DWORD dwClrColor = this->GetWindowColor(m_sPromptColor);
+	UINT dwStyle = DT_SINGLELINE | DT_CENTER | DT_VCENTER | DT_END_ELLIPSIS;// DT_NOCLIP;
+
+	pRender->DrawText(m_rcItem, strPrompt, dwClrColor, L"", dwStyle);
 }
 
 void Combo::PaintText(IRenderContext* pRender)
@@ -308,6 +338,9 @@ void Combo::PaintText(IRenderContext* pRender)
 			pControl->AlphaPaint(pRender, rcText);
 			pControl->SetPos(rcOldPos);
 		}
+	}
+	else {
+		PaintPromptText(pRender);
 	}
 }
 
